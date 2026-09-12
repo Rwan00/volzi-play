@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support & FAQ — Volzi Play</title>
+  <meta name="description" content="Support, Help, and Frequently Asked Questions for Volzi Play iOS App.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="app_icon.png">
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <img src="app_icon.png" alt="Volzi Play Icon" class="brand-icon">
+        <span class="brand-name">VOLZI PLAY</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="support.html" class="active">Support</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+          <li><a href="terms.html">Terms</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h1 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 0.5rem; color: #fff;">Customer Support</h1>
+      <p>We are dedicated to providing a smooth and quiet viewing experience. If you encounter any issues, questions, or have feedback, we are here to help.</p>
+    </div>
+
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      
+      <div style="margin-top: 1rem;">
+        <h3 style="color: var(--accent-teal); font-size: 1.1rem; margin-bottom: 0.3rem;">Does Volzi Play support live M3U8 streams?</h3>
+        <p>Yes. On iOS, Volzi Play utilizes Apple's AVPlayer framework, which natively supports HTTP Live Streaming (HLS / M3U8). Note that streams requiring custom HTTP request headers or DRM keys may not play.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <h3 style="color: var(--accent-teal); font-size: 1.1rem; margin-bottom: 0.3rem;">Which video and audio formats are supported?</h3>
+        <p>Volzi Play supports standard iOS formats including MP4, MOV, M4V, M3U8 (HLS), and audio streams like MP3, M4A, and AAC.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <h3 style="color: var(--accent-teal); font-size: 1.1rem; margin-bottom: 0.3rem;">Why did my video link fail to play?</h3>
+        <p>Common reasons include: expired video URLs, server geo-restrictions, unsupported video codecs (e.g. MKV/AVI not supported by AVPlayer), or unstable internet connectivity.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <h3 style="color: var(--accent-teal); font-size: 1.1rem; margin-bottom: 0.3rem;">Are any videos stored on Volzi Play servers?</h3>
+        <p>No. Volzi Play is a playback client. All streaming takes place directly between your device and the host server. We do not host or store any media.</p>
+      </div>
+    </div>
+
+    <div class="contact-box">
+      <h2 style="justify-content: center; margin-bottom: 0.5rem; color: #fff;">Contact Our Support Team</h2>
+      <p style="color: var(--text-secondary);">When reporting an issue, please include your iOS version, device model, and link format.</p>
+      <div style="margin: 1.5rem 0;">
+        <a href="mailto:support@volziplay.com" class="btn-primary">Email support@volziplay.com</a>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">We aim to reply within 24–48 hours on business days.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+    </div>
+    <p>© 2026 Volzi Play. All rights reserved.</p>
+  </footer>
+</body>
+</html>
