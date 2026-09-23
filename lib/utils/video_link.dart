@@ -32,4 +32,23 @@ class VideoLink {
     if (path.endsWith('.m4a') || path.endsWith('.aac')) return 'Audio';
     return 'Network video';
   }
+
+  static String suggestedTitle(String raw) {
+    final uri = tryParse(raw);
+    if (uri == null) return 'Untitled video';
+    final segments = uri.pathSegments.where((segment) => segment.isNotEmpty).toList();
+    if (segments.isNotEmpty) {
+      var last = Uri.decodeComponent(segments.last);
+      final query = last.indexOf('?');
+      if (query >= 0) last = last.substring(0, query);
+      final dot = last.lastIndexOf('.');
+      if (dot > 0) last = last.substring(0, dot);
+      last = last.replaceAll(RegExp(r'[-_]+'), ' ').trim();
+      final lower = last.toLowerCase();
+      if (last.isNotEmpty && lower != 'playlist' && lower != 'index' && lower != 'master') {
+        return last;
+      }
+    }
+    return uri.host;
+  }
 }

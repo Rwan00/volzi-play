@@ -7,7 +7,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/atmosphere.dart';
 import '../widgets/brand_mark.dart';
-import 'home_screen.dart';
+import 'app_shell.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 800),
-        pageBuilder: (_, animation, _) => const HomeScreen(),
+        pageBuilder: (_, animation, _) => const AppShell(),
         transitionsBuilder: (_, animation, _, child) {
           return FadeTransition(opacity: animation, child: child);
         },

@@ -3,11 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/splash_screen.dart';
+import 'services/library_store.dart';
+import 'services/settings_store.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LibraryStore.instance.load();
+  await SettingsStore.instance.load();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
     statusBarColor: Colors.transparent,
     systemNavigationBarColor: AppColors.night,

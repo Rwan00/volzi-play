@@ -9,24 +9,24 @@ class AppCopy {
   AppCopy._();
 
   static const brand = 'Volzi Play';
-  static const version = '1.0.0';
+  static const version = '1.3.0';
   static const supportEmail = 'support@volziplay.com';
   static const legalEmail = 'legal@volziplay.com';
   static const copyrightYear = '2026';
   static const demoUrl = 'https://assets.afcdn.com/video49/20210722/v_645516.m3u8';
   static const tagline = 'A quieter way to watch';
-  static const cinemaLine = 'iOS  ·  cinematic player';
+  static const cinemaLine = 'Private library  ·  cinematic player';
 
   static const about = [
     CopyBlock(
       title: 'Who we are',
       body:
-          'Volzi Play is a calm, luxury iOS video player built for people who want to watch live streams and direct files without noise. You paste the link you choose, then watch it in a dedicated player with a midnight-navy and ice-teal interface that keeps the picture first.',
+          'Volzi Play is a personal video library for iOS. You collect playable links you have the right to watch, organize them, and return to them with resume points, favorites, and playlists. The interface stays quiet so the picture comes first.',
     ),
     CopyBlock(
       title: 'What the app does',
       body:
-          'Start on the home screen by entering an M3U8, MP4, or another format iOS can play through AVPlayer. Tap Play and you move into a full player page with pause, resume, seeking, playback speed, and cinema-style fullscreen.',
+          'Add M3U8, MP4, and other iOS-playable links to a local library. Continue unfinished titles, save favorites, build playlists with autoplay, search and sort your collection, and use a full player with skip, speed, loop, sleep timer, and cinema fullscreen.',
     ),
     CopyBlock(
       title: 'Design',
@@ -59,7 +59,7 @@ class AppCopy {
     CopyBlock(
       title: 'What stays on your device',
       body:
-          'The video URL you enter is used only to play the file through the system player. Recent links are stored locally with Shared Preferences so you can play them again. You can delete any item or clear the list from the home screen.',
+          'Titles, links, playlists, favorites, last playback positions, and your speed or skip preferences stay on this device. Nothing is uploaded to a Volzi server. You can rename, delete, or reset the library at any time from Settings.',
     ),
     CopyBlock(
       title: 'Network and content',
@@ -183,7 +183,7 @@ class AppCopy {
     CopyBlock(
       title: 'What to include',
       body:
-          'Mention app version 1.0.0, your iOS device and system version, the link format (such as M3U8 or MP4), and a description of what happens. Do not send unlawful content. We never need passwords for other accounts.',
+          'Mention app version 1.3.0, your iOS device and system version, the link format (such as M3U8 or MP4), and a description of what happens. Do not send unlawful content. We never need passwords for other accounts.',
     ),
     CopyBlock(
       title: 'Response times',
@@ -199,24 +199,24 @@ class AppCopy {
 
   static const howTo = [
     CopyBlock(
-      title: 'Step 1 — Open Volzi Play',
+      title: 'Step 1 — Add to your library',
       body:
-          'After the splash screen you land on the URL page. That is the only playback gateway. Every informational page lives in the side menu.',
+          'From Home or Library, add a playable HTTP or HTTPS link and an optional title. The item is stored on this device. A public sample stream is included so you can try the player immediately.',
     ),
     CopyBlock(
-      title: 'Step 2 — Paste a link',
+      title: 'Step 2 — Organize',
       body:
-          'Copy a video address from a source you have the right to use. Paste it into the field or use Paste. The app accepts HTTP and HTTPS addresses, including M3U8 playlists and MP4 files. You can also tap Play sample video to try a public demo stream.',
+          'Rename titles, heart favorites, search the library, and sort by newest, name, unfinished, or most played. Create playlists and reorder items for a queue.',
     ),
     CopyBlock(
-      title: 'Step 3 — Tap Play',
+      title: 'Step 3 — Watch and resume',
       body:
-          'If the URL looks valid you move to the player. Loading appears, then playback starts. The link is saved in Recents on this device only.',
+          'Open any title to play. If you leave partway through, Continue watching and History bring you back to the last position. Playlists can autoplay the next item.',
     ),
     CopyBlock(
-      title: 'Step 4 — Control playback',
+      title: 'Step 4 — Use the player tools',
       body:
-          'Inside the player you will find play, pause, a seek bar, speed, and fullscreen. Tap the picture to show or hide the chrome so the session stays cinematic.',
+          'Skip forward or back, change speed, loop, set a sleep timer, enter cinema fullscreen, and favorite from the player. Double-tap the left or right side of the picture to skip.',
     ),
     CopyBlock(
       title: 'If a link fails',
@@ -226,6 +226,16 @@ class AppCopy {
   ];
 
   static const faq = [
+    CopyBlock(
+      title: 'Can I resume a video later?',
+      body:
+          'Yes. Volzi Play stores the last position on this device. Home shows Continue watching, and History lists everything you have started. You can turn resume off in Playback settings.',
+    ),
+    CopyBlock(
+      title: 'How do playlists work?',
+      body:
+          'Create a list, add library items, reorder them, and play from the start. When a title ends, the next item can start automatically if Autoplay next is enabled.',
+    ),
     CopyBlock(
       title: 'Does live M3U8 work?',
       body:
@@ -239,7 +249,7 @@ class AppCopy {
     CopyBlock(
       title: 'Are my videos uploaded to the cloud?',
       body:
-          'No. Playback happens between your device and the link source. The recents list is local and can be deleted.',
+          'No. Playback happens between your device and the link source. Library items, playlists, favorites, and resume points are local and can be deleted.',
     ),
     CopyBlock(
       title: 'Why does the screen stay awake?',

@@ -7,8 +7,10 @@ import '../screens/copyright_screen.dart';
 import '../screens/disclaimer_screen.dart';
 import '../screens/faq_screen.dart';
 import '../screens/formats_screen.dart';
+import '../screens/history_screen.dart';
 import '../screens/how_to_use_screen.dart';
 import '../screens/privacy_screen.dart';
+import '../screens/settings_screen.dart';
 import '../screens/terms_screen.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
@@ -37,7 +39,7 @@ class VolziDrawer extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Version ${AppCopy.version}  ·  iOS',
+                'Version ${AppCopy.version}',
                 style: AppTheme.cairo(size: 12, color: AppColors.muted),
               ),
               const SizedBox(height: 18),
@@ -47,7 +49,9 @@ class VolziDrawer extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
                   children: const [
-                    _Item(icon: Icons.play_circle_outline_rounded, label: 'Player', home: true),
+                    _Item(icon: Icons.play_circle_outline_rounded, label: 'Home', home: true),
+                    _Item(icon: Icons.history_rounded, label: 'Watch history', page: HistoryScreen()),
+                    _Item(icon: Icons.tune_rounded, label: 'Playback settings', page: SettingsScreen()),
                     _Item(icon: Icons.auto_awesome_outlined, label: 'About Volzi Play', page: AboutScreen()),
                     _Item(icon: Icons.menu_book_outlined, label: 'How to use', page: HowToUseScreen()),
                     _Item(icon: Icons.layers_outlined, label: 'Supported formats', page: FormatsScreen()),

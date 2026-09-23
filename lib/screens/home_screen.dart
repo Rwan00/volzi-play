@@ -1,234 +1,220 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import '../data/app_copy.dart';
-import '../services/recent_store.dart';
+import '../models/library_video.dart';
+import '../screens/history_screen.dart';
+import '../screens/settings_screen.dart';
+import '../services/library_store.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
-import '../utils/video_link.dart';
+import '../utils/play_route.dart';
+import '../utils/time_format.dart';
+import '../widgets/add_video_sheet.dart';
 import '../widgets/atmosphere.dart';
-import '../widgets/brand_mark.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/gold_button.dart';
-import '../widgets/volzi_drawer.dart';
-import 'player_screen.dart';
+import '../widgets/shell_header.dart';
+import '../widgets/video_tile.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  Widget build(BuildContext context) {
+    return NightBackdrop(
+      child: SafeArea(
+        child: ListenableBuilder(
+          listenable: LibraryStore.instance,
+          builder: (context, _) {
+            final store = LibraryStore.instance;
+            final resume = store.continueWatching;
+            final recent = store.history.take(5).toList();
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 24),
+              children: [
+                ShellHeader(
+                  title: 'Home',
+                  action: IconButton(
+                    tooltip: 'Settings',
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen()));
+                    },
+                    icon: const Icon(Icons.tune_rounded, color: AppColors.goldSoft),
+                  ),
+                ),
+                _StatsRow(store: store),
+                const SizedBox(height: 16),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.charcoal.withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: AppColors.line),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Build your private cinema', style: AppTheme.elMessiri(size: 22, color: AppColors.gold)),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Save streams and files, resume where you left off, keep favorites, and play curated lists.',
+                          style: AppTheme.cairo(size: 14, color: AppColors.muted, height: 1.7),
+                        ),
+                        const SizedBox(height: 16),
+                        GoldButton(
+                          label: 'Add a video',
+                          icon: Icons.add_rounded,
+                          onPressed: () => showAddVideoSheet(context, playAfterSave: true),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (resume.isNotEmpty) ...[
+                  const SizedBox(height: 22),
+                  _SectionTitle(
+                    title: 'Continue watching',
+                    onSeeAll: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const HistoryScreen())),
+                  ),
+                  const SizedBox(height: 8),
+                  _ContinueCard(video: resume.first),
+                ],
+                const SizedBox(height: 22),
+                _SectionTitle(
+                  title: 'Recently played',
+                  onSeeAll: recent.isEmpty
+                      ? null
+                      : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const HistoryScreen())),
+                ),
+                const SizedBox(height: 8),
+                if (recent.isEmpty)
+                  const EmptyState(
+                    icon: Icons.history_rounded,
+                    title: 'No playback yet',
+                    message: 'Add a video to your library and play it. History, resume points, and favorites stay on this device.',
+                  )
+                else
+                  ...recent.map((video) => VideoTile(video: video)),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final _controller = TextEditingController();
-  final _focus = FocusNode();
-  String? _error;
-  List<String> _recent = [];
+class _StatsRow extends StatelessWidget {
+  const _StatsRow({required this.store});
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRecent();
-  }
-
-  Future<void> _loadRecent() async {
-    final items = await RecentStore.load();
-    if (mounted) setState(() => _recent = items);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _focus.dispose();
-    super.dispose();
-  }
-
-  Future<void> _paste() async {
-    final data = await Clipboard.getData(Clipboard.kTextPlain);
-    final text = data?.text?.trim();
-    if (text == null || text.isEmpty) {
-      _toast('Clipboard is empty.');
-      return;
-    }
-    setState(() {
-      _controller.text = text;
-      _error = null;
-    });
-  }
-
-  void _toast(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: AppColors.graphite,
-        content: Text(message, style: AppTheme.cairo(size: 14)),
-      ),
-    );
-  }
-
-  Future<void> _play([String? value]) async {
-    final raw = VideoLink.normalize(value ?? _controller.text);
-    final message = VideoLink.validationMessage(raw);
-    setState(() {
-      _controller.text = raw;
-      _error = message;
-    });
-    if (message != null) return;
-    _focus.unfocus();
-    final next = await RecentStore.remember(raw);
-    if (!mounted) return;
-    setState(() => _recent = next);
-    await Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, animation, _) => PlayerScreen(url: raw),
-        transitionsBuilder: (_, animation, _, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
-  }
+  final LibraryStore store;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const VolziDrawer(),
-      body: NightBackdrop(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(22, 8, 22, 36),
+    return Row(
+      children: [
+        _StatChip(label: 'Library', value: '${store.videos.length}'),
+        const SizedBox(width: 8),
+        _StatChip(label: 'Saved', value: '${store.favorites.length}'),
+        const SizedBox(width: 8),
+        _StatChip(label: 'Playlists', value: '${store.playlists.length}'),
+      ],
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  const _StatChip({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.graphite,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.line),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
             children: [
-              Row(
-                children: [
-                  Builder(
-                    builder: (context) => IconButton(
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                      icon: const Icon(Icons.menu_rounded, color: AppColors.gold),
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    AppCopy.brand.toUpperCase(),
-                    style: AppTheme.cinzel(size: 14, letterSpacing: 4),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 48),
-                ],
-              ),
-              const SizedBox(height: 18),
-              const Center(child: BrandMark(size: 92)),
-              const SizedBox(height: 22),
-              Text(
-                'Enter a watch link',
-                textAlign: TextAlign.center,
-                style: AppTheme.elMessiri(size: 30, color: AppColors.gold),
-              ),
-              const SizedBox(height: 26),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.charcoal.withValues(alpha: 0.85),
-                  borderRadius: BorderRadius.circular(26),
-                  border: Border.all(color: AppColors.line),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _controller,
-                        focusNode: _focus,
-                        keyboardType: TextInputType.url,
-                        textInputAction: TextInputAction.go,
-                        autocorrect: false,
-                        onSubmitted: (_) => _play(),
-                        onChanged: (_) {
-                          if (_error != null) setState(() => _error = null);
-                        },
-                        style: AppTheme.cairo(size: 15, height: 1.5),
-                        decoration: InputDecoration(
-                          hintText: 'https://example.com/stream.m3u8',
-                          errorText: _error,
-                          prefixIcon: const Icon(Icons.link_rounded, color: AppColors.gold),
-                          suffixIcon: IconButton(
-                            tooltip: 'Paste',
-                            onPressed: _paste,
-                            icon: const Icon(Icons.content_paste_rounded, color: AppColors.goldSoft),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      GoldButton(
-                        label: 'Play',
-                        icon: Icons.play_arrow_rounded,
-                        onPressed: () => _play(),
-                      ),
-                      const SizedBox(height: 12),
-                      TextButton.icon(
-                        onPressed: () => _play(AppCopy.demoUrl),
-                        icon: const Icon(Icons.auto_awesome_outlined, color: AppColors.goldSoft, size: 18),
-                        label: Text(
-                          'Play sample video',
-                          style: AppTheme.cairo(size: 15, weight: FontWeight.w600, color: AppColors.goldSoft),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 28),
-              const GoldHairline(),
-              const SizedBox(height: 22),
-              Row(
-                children: [
-                  Text('Recents on this device', style: AppTheme.elMessiri(size: 20)),
-                  const Spacer(),
-                  if (_recent.isNotEmpty)
-                    TextButton(
-                      onPressed: () async {
-                        await RecentStore.clear();
-                        if (mounted) setState(() => _recent = []);
-                      },
-                      child: Text('Clear', style: AppTheme.cairo(size: 13, color: AppColors.gold)),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              if (_recent.isEmpty)
-                Text(
-                  'No links are saved until you play the first video. Recents stay on this device only.',
-                  style: AppTheme.cairo(size: 14, color: AppColors.muted, height: 1.8),
-                )
-              else
-                ..._recent.map((url) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                        side: const BorderSide(color: AppColors.line),
-                      ),
-                      tileColor: AppColors.graphite,
-                      leading: const Icon(Icons.history_rounded, color: AppColors.gold),
-                      title: Text(
-                        VideoLink.formatLabel(url),
-                        style: AppTheme.cairo(size: 13, color: AppColors.goldSoft, weight: FontWeight.w600),
-                      ),
-                      subtitle: Text(
-                        url,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTheme.cairo(size: 13, color: AppColors.muted),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.close_rounded, color: AppColors.muted, size: 18),
-                        onPressed: () async {
-                          final next = await RecentStore.remove(url);
-                          if (mounted) setState(() => _recent = next);
-                        },
-                      ),
-                      onTap: () => _play(url),
-                    ),
-                  );
-                }),
+              Text(value, style: AppTheme.elMessiri(size: 20, color: AppColors.gold)),
+              Text(label, style: AppTheme.cairo(size: 12, color: AppColors.muted)),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.title, this.onSeeAll});
+
+  final String title;
+  final VoidCallback? onSeeAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(title, style: AppTheme.elMessiri(size: 20)),
+        const Spacer(),
+        if (onSeeAll != null)
+          TextButton(
+            onPressed: onSeeAll,
+            child: Text('See all', style: AppTheme.cairo(size: 13, color: AppColors.gold)),
+          ),
+      ],
+    );
+  }
+}
+
+class _ContinueCard extends StatelessWidget {
+  const _ContinueCard({required this.video});
+
+  final LibraryVideo video;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.graphite,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: () => openPlayer(context, videoId: video.id),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppColors.line),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(video.title, style: AppTheme.elMessiri(size: 20, color: AppColors.goldSoft)),
+                const SizedBox(height: 6),
+                Text(
+                  'Resume at ${TimeFormat.clock(Duration(milliseconds: video.lastPositionMs))}  ·  ${video.format}',
+                  style: AppTheme.cairo(size: 13, color: AppColors.muted),
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(99),
+                  child: LinearProgressIndicator(
+                    value: video.progress,
+                    minHeight: 4,
+                    color: AppColors.gold,
+                    backgroundColor: AppColors.line,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
